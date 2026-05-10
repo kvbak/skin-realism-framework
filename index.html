@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skin Realism Framework — by @hvmbak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #C87D52;
+    --orange-deep: #B86A3F;
+    --blue: #A8C5DA;
+    --blue-deep: #94B5CC;
+    --black: #0D0D0D;
+    --black-soft: #1A1A1A;
+    --paper: #F5F0EB;
+    --paper-dim: rgba(245,240,235,0.6);
+    --ink: rgba(13,13,13,0.55);
+    --line: rgba(13,13,13,0.08);
+    --line-dark: rgba(245,240,235,0.08);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--orange);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--black);
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding: 14px 14px 100px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    background: var(--black);
+    color: var(--paper);
+    padding: 11px 24px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 400;
+    border-radius: 24px 24px 0 0;
+  }
+  .tb-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--orange);
+    animation: pulse 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.8)} }
+  .tb-label { opacity: 0.6; }
+  .tb-author { color: var(--orange); font-weight: 500; letter-spacing: 0.05em; text-transform: lowercase; }
+
+  /* ============ CARDS ============ */
+  .card { border-radius: 0; overflow: hidden; margin-bottom: 14px; position: relative; }
+  .card.first { border-radius: 0 0 24px 24px; }
+  .card.rounded { border-radius: 24px; }
+  .card.blue { background: var(--blue); color: var(--black); }
+  .card.black { background: var(--black); color: var(--paper); }
+  .card.paper { background: var(--paper); color: var(--black); }
+
+  /* ============ NAV ============ */
+  .nav {
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-logo {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-mark {
+    position: relative; width: 36px; height: 36px;
+    flex-shrink: 0; display: inline-flex;
+    align-items: center; justify-content: center;
+  }
+  .nav-mark .logo-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; transform-origin: center center;
+    will-change: transform, opacity, filter;
+    user-select: none; -webkit-user-drag: none; pointer-events: none;
+  }
+  .nav-mark .logo-specular {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    background: linear-gradient(100deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 65%);
+    -webkit-mask-image: url("https://i.postimg.cc/Xqxnvb8q/b5ff3731-1251-4772-93ed-75ffdd59e9e9.png");
+    mask-image: url("https://i.postimg.cc/Xqxnvb8q/b5ff3731-1251-4772-93ed-75ffdd59e9e9.png");
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    transform-origin: center center; will-change: transform, opacity;
+  }
+  .studio-tag {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px; letter-spacing: -0.01em;
+    color: var(--orange); font-style: italic; margin-left: -2px;
+  }
+  .nav-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; opacity: 0.45;
+  }
+
+  /* ============ HEADER ============ */
+  .header-section {
+    padding: 80px 56px 60px;
+    position: relative; overflow: hidden;
+  }
+  .header-bg-mark {
+    position: absolute; bottom: -40px; right: -20px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(120px, 20vw, 240px);
+    color: rgba(13,13,13,0.04); line-height: 1;
+    pointer-events: none; user-select: none; letter-spacing: -0.02em;
+  }
+  .header-eyebrow {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; opacity: 0.55;
+  }
+  .header-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--black); opacity: 0.4; }
+  .header-section h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(52px, 8vw, 112px);
+    line-height: 0.9; letter-spacing: -0.02em;
+    margin-bottom: 24px; max-width: 900px;
+  }
+  .header-section h1 .accent { color: var(--orange-deep); font-style: italic; }
+  .header-section .lede {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(15px, 1.4vw, 18px);
+    font-style: italic; line-height: 1.65;
+    color: var(--ink); max-width: 600px; margin-top: 8px;
+  }
+
+  /* ============ SECTION ============ */
+  .section { padding: 70px 56px; }
+  .section h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(34px, 4.5vw, 60px);
+    line-height: 0.95; letter-spacing: -0.02em;
+    margin-bottom: 28px; max-width: 820px;
+  }
+  .section h2 .accent-italic { font-style: italic; color: var(--orange-deep); }
+  .card.black .section h2 .accent-italic { color: var(--orange); }
+
+  .body-text {
+    font-size: 17px; line-height: 1.65;
+    color: var(--ink); max-width: 660px; margin-bottom: 32px;
+  }
+  .card.black .body-text { color: var(--paper-dim); }
+  .body-text strong { color: var(--black); font-weight: 500; }
+  .card.black .body-text strong { color: var(--paper); }
+
+  .step-num {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; opacity: 0.55; margin-bottom: 24px;
+  }
+  .step-num .num-circle {
+    width: 28px; height: 28px; border: 1px solid currentColor;
+    border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 11px; opacity: 0.7;
+  }
+
+  /* ============ GRAPHIC SECTION ============ */
+  .graphic-intro {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700; line-height: 1.4;
+    color: var(--black); max-width: 680px;
+    margin-bottom: 36px;
+  }
+  .card.black .graphic-intro { color: var(--paper); }
+
+  .graphic-frame {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(13,13,13,0.04);
+    margin-bottom: 28px;
+    border: 1px solid var(--line);
+  }
+  .card.black .graphic-frame { border-color: var(--line-dark); background: rgba(245,240,235,0.04); }
+  .graphic-frame img {
+    width: 100%;
+    display: block;
+  }
+
+  .pdf-download {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: transparent;
+    border: 1.5px solid var(--black);
+    color: var(--black);
+    padding: 14px 28px; border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; text-decoration: none;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+  }
+  .pdf-download:hover { background: var(--black); color: var(--paper); }
+  .card.black .pdf-download { border-color: var(--paper-dim); color: var(--paper); }
+  .card.black .pdf-download:hover { background: var(--paper); color: var(--black); }
+  .pdf-download svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ============ BOT BLOCK ============ */
+  .bot-block {
+    background: rgba(13,13,13,0.04);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 36px;
+    margin-top: 8px;
+  }
+  .card.black .bot-block {
+    background: rgba(245,240,235,0.04);
+    border-color: var(--line-dark);
+  }
+  .bot-block p {
+    font-size: 17px; line-height: 1.65;
+    color: var(--ink); margin-bottom: 0;
+  }
+  .card.black .bot-block p { color: var(--paper-dim); }
+  .bot-block p strong { color: var(--black); font-weight: 500; }
+  .card.black .bot-block p strong { color: var(--paper); }
+
+  /* ============ HERO IMAGES ============ */
+  .header-inner {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 32px;
+    align-items: center;
+  }
+  .header-text { min-width: 0; }
+  .hero-imgs {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: flex-end;
+    height: 100%;
+  }
+  .hero-img-big {
+    width: 160px;
+    aspect-ratio: 9/16;
+    object-fit: cover;
+    border-radius: 18px;
+    display: block;
+    flex-shrink: 0;
+  }
+  .hero-img-small {
+    width: 110px;
+    aspect-ratio: 9/16;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    flex-shrink: 0;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 760px) {
+    .header-inner {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .hero-imgs {
+      flex-direction: row;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .hero-img-big { width: 120px; border-radius: 14px; }
+    .hero-img-small { width: 80px; border-radius: 10px; margin-bottom: 20px; }
+  }
+  .cta-block {
+    padding: 90px 56px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-block .scribble-mark {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(22px, 2.5vw, 32px);
+    color: var(--orange); margin-bottom: 16px;
+    display: block; transform: rotate(-3deg); line-height: 1;
+  }
+  .cta-block h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(40px, 5.5vw, 72px);
+    line-height: 0.95; letter-spacing: -0.02em;
+    margin-bottom: 24px; color: var(--paper);
+  }
+  .cta-block h2 .accent { color: var(--orange); font-style: italic; }
+  .cta-block p {
+    font-size: 16px; color: var(--paper-dim);
+    max-width: 480px; margin: 0 auto 40px; line-height: 1.6;
+  }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--orange); color: var(--black);
+    padding: 20px 40px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; text-decoration: none;
+    transition: all 0.25s ease;
+  }
+  .cta-btn:hover { background: var(--paper); transform: translateY(-2px); }
+  .cta-btn svg { width: 14px; height: 14px; }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    padding: 44px 56px 36px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; opacity: 0.4;
+  }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 760px) {
+    body { padding: 8px 8px 60px; }
+    .header-section { padding: 60px 28px 50px; }
+    .section { padding: 50px 28px; }
+    .nav { padding: 14px 20px; }
+    .nav-logo { font-size: 15px; gap: 8px; }
+    .studio-tag { font-size: 15px; }
+    .nav-meta { display: none; }
+    .cta-block { padding: 70px 28px; }
+    .footer { padding: 32px 28px 28px; flex-direction: column; align-items: flex-start; }
+    .bot-block { padding: 24px; }
+    .section h2 { font-size: clamp(28px, 8vw, 44px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="tb-dot"></span>
+  <span class="tb-label">Skin Realism Framework</span>
+  <span class="tb-label" style="opacity:0.3;">|</span>
+  <span class="tb-author">by @hvmbak</span>
+</div>
+
+<!-- HEADER -->
+<div class="card paper first">
+  <nav class="nav">
+    <div class="nav-logo">
+      <span class="nav-mark">
+        <img class="logo-img" id="logoImg"
+          src="https://i.postimg.cc/Xqxnvb8q/b5ff3731-1251-4772-93ed-75ffdd59e9e9.png"
+          alt="HUMBAK" draggable="false"/>
+        <div class="logo-specular" id="logoSpec"></div>
+      </span>
+      HUMBAK<span class="studio-tag">studio</span>
+    </div>
+    <div class="nav-meta">case study / 02</div>
+  </nav>
+
+  <section class="header-section">
+    <div class="header-bg-mark">SKIN</div>
+    <div class="header-inner">
+      <div class="header-text">
+        <div class="header-eyebrow">realism framework</div>
+        <h1>skóra<br>w <span class="accent">AI —</span><br>jak to działa</h1>
+        <p class="lede">
+          AI potrzebuje dokładnej instrukcji. Choć narzędzia coraz lepiej rozumieją
+          realizm skóry, nadal nie radzą sobie z wieloma innymi elementami.
+          Wiedza o tym co działa — i kiedy — to przewaga.
+        </p>
+      </div>
+      <div class="hero-imgs">
+        <img class="hero-img-big" src="https://raw.githubusercontent.com/kvbak/zdjecia-suit/main/big-smile.png" alt="" />
+        <img class="hero-img-small" src="https://raw.githubusercontent.com/kvbak/zdjecia-suit/main/small-flower.png" alt="" />
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SEKCJA 1 — BLUE -->
+<div class="card blue rounded">
+  <section class="section">
+    <div class="step-num">
+      <span class="num-circle">01</span>
+      <span>narzędzie vs. art direction</span>
+    </div>
+    <h2>narzędzie to tylko <span class="accent-italic">połowa</span> roboty</h2>
+    <p class="body-text">
+      Przy tworzeniu treści dla klientów <strong>art direction jest ważniejsze niż samo narzędzie</strong>.
+      Możesz mieć dostęp do najlepszego generatora na rynku i wciąż dostawać przeciętne obrazy —
+      bo nie wiesz co do niego wpisać i dlaczego.
+    </p>
+    <p class="body-text">
+      Każde narzędzie ma inne mocne strony. Jedno świetnie radzi sobie ze skórą,
+      inne z materiałami, jeszcze inne z kompozycją. To zmienia się
+      <strong>z tygodnia na tydzień</strong> — modele są aktualizowane, nowe wychodzą,
+      stare tracą relevance. Odpowiedni system i bycie na bieżąco pozwala tworzyć
+      precyzyjnie, nie wydając pieniędzy na 10 różnych subskrypcji.
+    </p>
+  </section>
+</div>
+
+<!-- SEKCJA 2 — BLACK -->
+<div class="card black rounded">
+  <section class="section">
+    <div class="step-num">
+      <span class="num-circle">02</span>
+      <span>słownik realizmu</span>
+    </div>
+    <h2>słowa które <span class="accent-italic">zmieniają</span> wynik</h2>
+    <p class="body-text">
+      Poniżej masz zestaw słów określających realizm i detale anatomii,
+      których możesz używać w swoich promptach. Pamiętaj —
+      <strong>użycie ich więcej nie oznacza lepszych efektów</strong>.
+      Wybierz kilka, pasujących do tego co chcesz akurat stworzyć.
+      Każde słowo robi konkretną robotę — używaj tylko tych
+      których efekt rozumiesz.
+    </p>
+
+    <!-- GRAFIKA -->
+    <div class="graphic-frame">
+      <img src="https://raw.githubusercontent.com/kvbak/zdjecia-suit/main/skin-anatomy.png" alt="Realism Framework — Skin Keywords" onerror="this.style.border='1px solid red'" />
+    </div>
+
+    <!-- PDF DOWNLOAD -->
+    <a href="https://raw.githubusercontent.com/kvbak/zdjecia-suit/main/skin-realism.pdf" target="_blank" rel="noopener" class="pdf-download">
+      <svg viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v8M8 10l-3-3M8 10l3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 13h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      pobierz PDF — Realism Framework
+    </a>
+  </section>
+</div>
+
+<!-- SEKCJA 3 — PAPER -->
+<div class="card paper rounded">
+  <section class="section">
+    <div class="step-num">
+      <span class="num-circle">03</span>
+      <span>jak piszę prompty</span>
+    </div>
+    <h2>po polsku,<br>przez <span class="accent-italic">bota</span></h2>
+
+    <div class="bot-block">
+      <p>
+        Swoje prompty piszę po polsku — tłumacząc detale mojemu
+        <strong>spersonalizowanemu botowi</strong>, który wypchany jest wiedzą
+        z art direction i wie jak pisać prompty żeby uzyskać najlepszy output.
+        Bot będzie dostępny w różnych wariantach w moim kursie. Będzie Twoim
+        <strong>kreatywnym asystentem i architektem promptów</strong> —
+        przekuwając Twoją wizję w gotowe prompty.
+      </p>
+    </div>
+  </section>
+</div>
+
+<!-- CTA — BLACK -->
+<div class="card black rounded">
+  <section class="cta-block">
+    <span class="scribble-mark">chcesz więcej?</span>
+    <h2>poznaj <span class="accent">cały system</span></h2>
+    <p>
+      pełne workflow — wizja, rozumienie marki, narzędzia i produkcja po najskuteczniejsze metody pozyskiwania klientów i automatyzacje z ciągłymi update'ami z najszybciej rozwijającej się nowej branży.
+    </p>
+    <a href="https://www.hvmbak.pl" target="_blank" rel="noopener" class="cta-btn">
+      zobacz
+      <svg viewBox="0 0 14 14" fill="none">
+        <path d="M2 7H12M12 7L7 2M12 7L7 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>© 2026 humbak studio</span>
+  <span>realism framework / 02</span>
+</footer>
+
+<script>
+  (() => {
+    const img = document.getElementById('logoImg');
+    const spec = document.getElementById('logoSpec');
+    if (!img || !spec) return;
+    const PERIOD_MS = 5000;
+    const MIN_SCALE = 0.012;
+    let start = null;
+    function frame(now) {
+      if (start === null) start = now;
+      const t = ((now - start) % PERIOD_MS) / PERIOD_MS;
+      const angle = t * Math.PI * 2;
+      const cos = Math.cos(angle);
+      const isFront = cos >= 0;
+      const scaleX = Math.max(Math.abs(cos), MIN_SCALE);
+      img.style.transform = `scaleX(${scaleX})`;
+      img.style.opacity = '1';
+      if (isFront) {
+        const sweep = Math.sin(angle) * 18;
+        spec.style.transform = `scaleX(${scaleX})`;
+        spec.style.opacity = String(0.4 + 0.5 * cos);
+        spec.style.background = `linear-gradient(${100 + sweep}deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 65%)`;
+      } else {
+        spec.style.opacity = '0';
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+</script>
+
+</body>
+</html>
